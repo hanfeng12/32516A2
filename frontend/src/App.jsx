@@ -1,6 +1,38 @@
+import { useEffect, useState } from "react";
 import "./App.css";
 
+const API_URL = "http://localhost:5001/api/expenses";
+
 function App() {
+  const [expenses, setExpenses] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  useEffect(() => {
+    fetchExpenses();
+  }, []);
+
+  async function fetchExpenses() {
+    try {
+      setLoading(true);
+      setErrorMessage("");
+
+      const response = await fetch(API_URL);
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch expenses.");
+      }
+
+      const data = await response.json();
+      setExpenses(data);
+    } catch (error) {
+      console.error(error);
+      setErrorMessage("Unable to load expenses. Please check the backend server.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <div className="app">
       <header className="app-header">
@@ -61,11 +93,38 @@ function App() {
           </form>
         </section>
 
-        <section className="card">
+        <section className="card expense-list-card">
           <h2>Expense List</h2>
-          <p className="placeholder-text">
-            Expenses will appear here after connecting the frontend to the backend API.
-          </p>
+
+          {loading && <p className="placeholder-text">Loading expenses...</p>}
+
+          {errorMessage && <p className="error-text">{errorMessage}</p>}
+
+          {!loading && !errorMessage && expenses.length === 0 && (
+            <p className="placeholder-text">
+              No expenses found. Add your first expense after the form is connected.
+            </p>
+          )}
+
+          {!loading && !errorMessage && expenses.length > 0 && (
+            <div className="expense-list">
+              {expenses.map((expense) => (
+                <article className="expense-item" key={expense._id}>
+                  <div>
+                    <h3>{expense.title}</h3>
+                    <p>
+                      {expense.category} • {expense.date}
+                    </p>
+                    {expense.description && (
+                      <p className="expense-description">{expense.description}</p>
+                    )}
+                  </div>
+
+                  <strong>${Number(expense.amount).toFixed(2)}</strong>
+                </article>
+              ))}
+            </div>
+          )}
         </section>
 
         <section className="card">

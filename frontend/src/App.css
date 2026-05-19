@@ -108,3 +108,47 @@ button:hover {
     grid-column: 1 / 2;
   }
 }
+.expense-list-card {
+  min-height: 260px;
+}
+
+.expense-list {
+  display: grid;
+  gap: 12px;
+}
+
+.expense-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  background-color: #f9fafb;
+}
+
+.expense-item h3 {
+  margin: 0 0 6px;
+  color: #111827;
+}
+
+.expense-item p {
+  margin: 0;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.expense-item strong {
+  white-space: nowrap;
+  color: #111827;
+}
+
+.expense-description {
+  margin-top: 6px !important;
+  color: #4b5563 !important;
+}
+
+.error-text {
+  color: #dc2626;
+  margin: 0;
+}
