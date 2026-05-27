@@ -29,10 +29,18 @@ function App() {
   const [editingExpenseId, setEditingExpenseId] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
 
+  const [currentUser, setCurrentUser] = useState(null);
+  const [adminUsers, setAdminUsers] = useState([]);
+  const [activities, setActivities] = useState([]);
+
+  const ADMIN_API_URL = "http://localhost:5001/api/admin";
+
   useEffect(() => {
     const token = localStorage.getItem("token");
-
-    if (token) {
+    const storedUser = localStorage.getItem("user");
+  
+    if (token && storedUser) {
+      setCurrentUser(JSON.parse(storedUser));
       setIsAuthenticated(true);
     }
   }, []);
@@ -42,6 +50,13 @@ function App() {
       fetchExpenses();
     }
   }, [isAuthenticated]);
+
+  useEffect(() => {
+    if (isAuthenticated && currentUser?.role === "admin") {
+      fetchAdminUsers();
+      fetchActivities();
+    }
+  }, [isAuthenticated, currentUser]);
 
   const filteredExpenses = expenses.filter((expense) => {
     const searchText = searchTerm.toLowerCase();
@@ -80,6 +95,52 @@ function App() {
       setErrorMessage(error.message);
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function fetchAdminUsers() {
+    try {
+      const token = localStorage.getItem("token");
+  
+      const response = await fetch(`${ADMIN_API_URL}/users`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+  
+      const data = await response.json();
+  
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to fetch users");
+      }
+  
+      setAdminUsers(data);
+    } catch (error) {
+      console.error("Fetch admin users error:", error);
+      setErrorMessage(error.message);
+    }
+  }
+  
+  async function fetchActivities() {
+    try {
+      const token = localStorage.getItem("token");
+  
+      const response = await fetch(`${ADMIN_API_URL}/activities`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+  
+      const data = await response.json();
+  
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to fetch activities");
+      }
+  
+      setActivities(data);
+    } catch (error) {
+      console.error("Fetch activities error:", error);
+      setErrorMessage(error.message);
     }
   }
 
@@ -199,7 +260,11 @@ function App() {
       }
 
       localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+
+      setCurrentUser(data.user);
       setIsAuthenticated(true);
+
       setAuthForm({
         name: "",
         email: "",
@@ -237,11 +302,16 @@ function App() {
 
   function handleLogout() {
     localStorage.removeItem("token");
-    setIsAuthenticated(false);
-    setExpenses([]);
-    setSearchTerm("");
-    setEditingExpenseId(null);
-    setErrorMessage("");
+      localStorage.removeItem("user");
+
+      setIsAuthenticated(false);
+      setCurrentUser(null);
+      setExpenses([]);
+      setAdminUsers([]);
+      setActivities([]);
+      setSearchTerm("");
+      setEditingExpenseId(null);
+      setErrorMessage("");
   }
 
   if (!isAuthenticated) {
@@ -496,6 +566,57 @@ function App() {
                 </article>
               ))}
             </div>
+          )}
+          {currentUser?.role === "admin" && (
+            <section className="card admin-panel">
+              <h2>Admin Panel</h2>
+              <p className="placeholder-text">
+                Admin users can manage user accounts and view user activity records.
+              </p>
+
+              <div className="admin-grid">
+                <div>
+                  <h3>All Users</h3>
+
+                  {adminUsers.length === 0 ? (
+                    <p className="placeholder-text">No users found.</p>
+                  ) : (
+                    <div className="admin-list">
+                      {adminUsers.map((user) => (
+                        <div className="admin-list-item" key={user._id}>
+                          <div>
+                            <strong>{user.name}</strong>
+                            <p>{user.email}</p>
+                          </div>
+                          <span>{user.role}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                <div>
+                  <h3>User Activities</h3>
+
+                  {activities.length === 0 ? (
+                    <p className="placeholder-text">No activities found.</p>
+                  ) : (
+                    <div className="activity-list">
+                      {activities.map((activity) => (
+                        <div className="activity-item" key={activity._id}>
+                          <strong>{activity.action}</strong>
+                          <p>{activity.description}</p>
+                          <small>
+                            {activity.user?.email || "Unknown user"} •{" "}
+                            {new Date(activity.createdAt).toLocaleString()}
+                          </small>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </section>
           )}
         </section>
       </main>
