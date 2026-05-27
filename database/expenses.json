@@ -1,0 +1,62 @@
+[
+  {
+    "_id": "6a1694267b0390a6eff91ec5",
+    "user": "6a16941b7b0390a6eff91ec4",
+    "title": "lunch",
+    "amount": 11,
+    "category": "food",
+    "date": "2026-05-27T00:00:00.000Z",
+    "note": "",
+    "createdAt": "2026-05-27T06:50:14.223Z",
+    "updatedAt": "2026-05-27T06:50:14.223Z",
+    "__v": 0
+  },
+  {
+    "_id": "6a1696397b0390a6eff91ec6",
+    "user": "6a1691d87b0390a6eff91ec2",
+    "title": "Lunch",
+    "amount": 15.5,
+    "category": "food",
+    "date": "2026-05-27T00:00:00.000Z",
+    "note": "",
+    "createdAt": "2026-05-27T06:59:05.390Z",
+    "updatedAt": "2026-05-27T07:01:32.818Z",
+    "__v": 0
+  },
+  {
+    "_id": "6a16be867b0390a6eff91ec7",
+    "user": "6a1691d87b0390a6eff91ec2",
+    "title": "Dinner",
+    "amount": 10,
+    "category": "Food",
+    "date": "2026-05-27T00:00:00.000Z",
+    "note": "",
+    "createdAt": "2026-05-27T09:51:02.300Z",
+    "updatedAt": "2026-05-27T09:51:02.300Z",
+    "__v": 0
+  },
+  {
+    "_id": "6a16be947b0390a6eff91ec8",
+    "user": "6a1691d87b0390a6eff91ec2",
+    "title": "jacket",
+    "amount": 100,
+    "category": "Shopping",
+    "date": "2026-05-27T00:00:00.000Z",
+    "note": "",
+    "createdAt": "2026-05-27T09:51:16.912Z",
+    "updatedAt": "2026-05-27T09:51:16.912Z",
+    "__v": 0
+  },
+  {
+    "_id": "6a16bead7b0390a6eff91ec9",
+    "user": "6a1691d87b0390a6eff91ec2",
+    "title": "Shoes",
+    "amount": 100,
+    "category": "Gift",
+    "date": "2026-05-15T00:00:00.000Z",
+    "note": "",
+    "createdAt": "2026-05-27T09:51:41.329Z",
+    "updatedAt": "2026-05-27T09:51:41.329Z",
+    "__v": 0
+  }
+]

@@ -1,0 +1,130 @@
+[
+  {
+    "_id": "6a16c0ed81b3fcace5e4befd",
+    "user": {
+      "_id": "6a1691d87b0390a6eff91ec2",
+      "name": "ybh123",
+      "email": "test1@gmail.com",
+      "role": "user"
+    },
+    "action": "LOGIN",
+    "entityType": "user",
+    "entityId": "6a1691d87b0390a6eff91ec2",
+    "description": "test1@gmail.com logged in",
+    "createdAt": "2026-05-27T10:01:17.436Z",
+    "updatedAt": "2026-05-27T10:01:17.436Z",
+    "__v": 0
+  },
+  {
+    "_id": "6a16c795ea3284f9e5252380",
+    "user": {
+      "_id": "6a16941b7b0390a6eff91ec4",
+      "name": "ybh",
+      "email": "test2@gmail.com",
+      "role": "admin"
+    },
+    "action": "LOGIN",
+    "entityType": "user",
+    "entityId": "6a16941b7b0390a6eff91ec4",
+    "description": "test2@gmail.com logged in",
+    "createdAt": "2026-05-27T10:29:41.271Z",
+    "updatedAt": "2026-05-27T10:29:41.271Z",
+    "__v": 0
+  },
+  {
+    "_id": "6a16c867302a5b98be4f5e36",
+    "user": {
+      "_id": "6a16941b7b0390a6eff91ec4",
+      "name": "ybh",
+      "email": "test2@gmail.com",
+      "role": "admin"
+    },
+    "action": "LOGIN",
+    "entityType": "user",
+    "entityId": "6a16941b7b0390a6eff91ec4",
+    "description": "test2@gmail.com logged in",
+    "createdAt": "2026-05-27T10:33:11.935Z",
+    "updatedAt": "2026-05-27T10:33:11.935Z",
+    "__v": 0
+  },
+  {
+    "_id": "6a16d4aa302a5b98be4f5e37",
+    "user": {
+      "_id": "6a16941b7b0390a6eff91ec4",
+      "name": "ybh",
+      "email": "test2@gmail.com",
+      "role": "admin"
+    },
+    "action": "LOGIN",
+    "entityType": "user",
+    "entityId": "6a16941b7b0390a6eff91ec4",
+    "description": "test2@gmail.com logged in",
+    "createdAt": "2026-05-27T11:25:30.424Z",
+    "updatedAt": "2026-05-27T11:25:30.424Z",
+    "__v": 0
+  },
+  {
+    "_id": "6a16d8142115ca41105910a3",
+    "user": {
+      "_id": "6a1691d87b0390a6eff91ec2",
+      "name": "ybh123",
+      "email": "test1@gmail.com",
+      "role": "user"
+    },
+    "action": "LOGIN",
+    "entityType": "user",
+    "entityId": "6a1691d87b0390a6eff91ec2",
+    "description": "test1@gmail.com logged in",
+    "createdAt": "2026-05-27T11:40:04.899Z",
+    "updatedAt": "2026-05-27T11:40:04.899Z",
+    "__v": 0
+  },
+  {
+    "_id": "6a16d8162115ca41105910a4",
+    "user": {
+      "_id": "6a1691d87b0390a6eff91ec2",
+      "name": "ybh123",
+      "email": "test1@gmail.com",
+      "role": "user"
+    },
+    "action": "LOGOUT",
+    "entityType": "user",
+    "entityId": "6a1691d87b0390a6eff91ec2",
+    "description": "test1@gmail.com logged out",
+    "createdAt": "2026-05-27T11:40:06.748Z",
+    "updatedAt": "2026-05-27T11:40:06.748Z",
+    "__v": 0
+  },
+  {
+    "_id": "6a16d81f2115ca41105910a5",
+    "user": {
+      "_id": "6a16941b7b0390a6eff91ec4",
+      "name": "ybh",
+      "email": "test2@gmail.com",
+      "role": "admin"
+    },
+    "action": "LOGIN",
+    "entityType": "user",
+    "entityId": "6a16941b7b0390a6eff91ec4",
+    "description": "test2@gmail.com logged in",
+    "createdAt": "2026-05-27T11:40:15.330Z",
+    "updatedAt": "2026-05-27T11:40:15.330Z",
+    "__v": 0
+  },
+  {
+    "_id": "6a16dbc732b24ef269894e51",
+    "user": {
+      "_id": "6a16941b7b0390a6eff91ec4",
+      "name": "ybh",
+      "email": "test2@gmail.com",
+      "role": "admin"
+    },
+    "action": "DELETE_USER",
+    "entityType": "user",
+    "entityId": "6a1690fb2ca261e403bcd9e4",
+    "description": "Admin deleted user account: rshf1202@gmail.com",
+    "createdAt": "2026-05-27T11:55:51.366Z",
+    "updatedAt": "2026-05-27T11:55:51.366Z",
+    "__v": 0
+  }
+]

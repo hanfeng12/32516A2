@@ -339,3 +339,31 @@ button:hover {
     grid-template-columns: 1fr 1fr;
   }
 }
+
+.admin-edit-user-form {
+  width: 100%;
+  display: grid;
+  gap: 10px;
+}
+
+.admin-edit-user-form input {
+  padding: 9px 10px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.delete-user-button {
+  padding: 6px 10px;
+  background-color: #ef4444;
+  font-size: 13px;
+}
+
+.delete-user-button:hover {
+  background-color: #dc2626;
+}
+
+.delete-user-button:disabled {
+  background-color: #9ca3af;
+  cursor: not-allowed;
+}

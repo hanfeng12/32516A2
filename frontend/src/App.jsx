@@ -33,6 +33,12 @@ function App() {
   const [adminUsers, setAdminUsers] = useState([]);
   const [activities, setActivities] = useState([]);
 
+  const [editingUserId, setEditingUserId] = useState(null);
+  const [adminUserForm, setAdminUserForm] = useState({
+  name: "",
+  password: "",
+});
+
   const ADMIN_API_URL = "http://localhost:5001/api/admin";
 
   useEffect(() => {
@@ -329,6 +335,100 @@ function App() {
     }
   }
 
+  function handleEditUser(user) {
+    setEditingUserId(user._id);
+    setAdminUserForm({
+      name: user.name,
+      password: "",
+    });
+  }
+  
+  function handleCancelUserEdit() {
+    setEditingUserId(null);
+    setAdminUserForm({
+      name: "",
+      password: "",
+    });
+  }
+  
+  async function handleUpdateUserProfile(userId) {
+    try {
+      setErrorMessage("");
+  
+      const token = localStorage.getItem("token");
+  
+      const payload = {
+        name: adminUserForm.name,
+      };
+  
+      if (adminUserForm.password.trim() !== "") {
+        payload.password = adminUserForm.password;
+      }
+  
+      const response = await fetch(`${ADMIN_API_URL}/users/${userId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
+      });
+  
+      const data = await response.json();
+  
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to update user profile");
+      }
+  
+      setEditingUserId(null);
+      setAdminUserForm({
+        name: "",
+        password: "",
+      });
+  
+      fetchAdminUsers();
+      fetchActivities();
+    } catch (error) {
+      console.error("Update user profile error:", error);
+      setErrorMessage(error.message);
+    }
+  }
+
+  async function handleDeleteUser(userId) {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this user account? This will also delete this user's expenses and activity records."
+    );
+  
+    if (!confirmDelete) {
+      return;
+    }
+  
+    try {
+      setErrorMessage("");
+  
+      const token = localStorage.getItem("token");
+  
+      const response = await fetch(`${ADMIN_API_URL}/users/${userId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+  
+      const data = await response.json();
+  
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to delete user");
+      }
+  
+      fetchAdminUsers();
+      fetchActivities();
+    } catch (error) {
+      console.error("Delete user error:", error);
+      setErrorMessage(error.message);
+    }
+  }
+
   if (!isAuthenticated) {
     return (
       <div className="auth-page">
@@ -599,11 +699,79 @@ function App() {
                     <div className="admin-list">
                       {adminUsers.map((user) => (
                         <div className="admin-list-item" key={user._id}>
-                          <div>
-                            <strong>{user.name}</strong>
-                            <p>{user.email}</p>
-                          </div>
-                          <span>{user.role}</span>
+                          {editingUserId === user._id ? (
+                            <div className="admin-edit-user-form">
+                              <input
+                                type="text"
+                                value={adminUserForm.name}
+                                onChange={(event) =>
+                                  setAdminUserForm({
+                                    ...adminUserForm,
+                                    name: event.target.value,
+                                  })
+                                }
+                                placeholder="User name"
+                              />
+
+                              <input
+                                type="password"
+                                value={adminUserForm.password}
+                                onChange={(event) =>
+                                  setAdminUserForm({
+                                    ...adminUserForm,
+                                    password: event.target.value,
+                                  })
+                                }
+                                placeholder="New password (optional)"
+                              />
+
+                              <div className="admin-user-actions">
+                                <button
+                                  type="button"
+                                  className="role-button"
+                                  onClick={() => handleUpdateUserProfile(user._id)}
+                                >
+                                  Save
+                                </button>
+
+                                <button
+                                  type="button"
+                                  className="cancel-button"
+                                  onClick={handleCancelUserEdit}
+                                >
+                                  Cancel
+                                </button>
+                              </div>
+                            </div>
+                          ) : (
+                            <>
+                              <div>
+                                <strong>{user.name}</strong>
+                                <p>{user.email}</p>
+                              </div>
+
+                              <div className="admin-user-actions">
+                                <span>{user.role}</span>
+
+                                <button
+                                  type="button"
+                                  className="role-button"
+                                  onClick={() => handleEditUser(user)}
+                                >
+                                  Edit
+                                </button>
+
+                                <button
+                                  type="button"
+                                  className="delete-user-button"
+                                  onClick={() => handleDeleteUser(user._id)}
+                                  disabled={currentUser?.id === user._id}
+                                >
+                                  Delete
+                                </button>
+                              </div>
+                            </>
+                          )}
                         </div>
                       ))}
                     </div>

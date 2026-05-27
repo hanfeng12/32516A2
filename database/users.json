@@ -1,0 +1,20 @@
+[
+  {
+    "_id": "6a1691d87b0390a6eff91ec2",
+    "name": "ybh123",
+    "email": "test1@gmail.com",
+    "role": "user",
+    "createdAt": "2026-05-27T06:40:24.173Z",
+    "updatedAt": "2026-05-27T06:40:24.173Z",
+    "__v": 0
+  },
+  {
+    "_id": "6a16941b7b0390a6eff91ec4",
+    "name": "ybh",
+    "email": "test2@gmail.com",
+    "role": "admin",
+    "createdAt": "2026-05-27T06:50:03.886Z",
+    "updatedAt": "2026-05-27T10:29:20.268Z",
+    "__v": 0
+  }
+]
