@@ -12,6 +12,8 @@ const createToken = (userId) => {
 };
 
 const logActivity = require("../utils/logActivity");
+const { protect } = require("../middleware/authMiddleware");
+
 
 router.post("/register", async (req, res) => {
   try {
@@ -86,7 +88,7 @@ router.post("/login", async (req, res) => {
     }
 
     const token = createToken(user._id);
-    
+
     await logActivity({
       userId: user._id,
       action: "LOGIN",
@@ -106,6 +108,23 @@ router.post("/login", async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ message: "Server error during login" });
+  }
+});
+
+router.post("/logout", protect, async (req, res) => {
+  try {
+    await logActivity({
+      userId: req.user._id,
+      action: "LOGOUT",
+      entityType: "user",
+      entityId: req.user._id,
+      description: `${req.user.email} logged out`,
+    });
+
+    res.json({ message: "Logged out successfully" });
+  } catch (error) {
+    console.error("Logout error:", error);
+    res.status(500).json({ message: "Server error during logout" });
   }
 });
 
