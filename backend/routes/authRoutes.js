@@ -11,6 +11,8 @@ const createToken = (userId) => {
   });
 };
 
+const logActivity = require("../utils/logActivity");
+
 router.post("/register", async (req, res) => {
   try {
     const { name, email, password } = req.body;
@@ -40,6 +42,14 @@ router.post("/register", async (req, res) => {
     });
 
     const token = createToken(user._id);
+
+    await logActivity({
+      userId: user._id,
+      action: "REGISTER",
+      entityType: "user",
+      entityId: user._id,
+      description: `${user.email} registered a new account`,
+    });
 
     res.status(201).json({
       token,
@@ -76,6 +86,14 @@ router.post("/login", async (req, res) => {
     }
 
     const token = createToken(user._id);
+    
+    await logActivity({
+      userId: user._id,
+      action: "LOGIN",
+      entityType: "user",
+      entityId: user._id,
+      description: `${user.email} logged in`,
+    });
 
     res.json({
       token,
