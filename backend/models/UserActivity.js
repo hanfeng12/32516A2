@@ -17,7 +17,7 @@ const userActivitySchema = new mongoose.Schema(
         "CREATE_EXPENSE",
         "UPDATE_EXPENSE",
         "DELETE_EXPENSE",
-        "UPDATE_USER_ROLE",
+        "UPDATE_USER_PROFILE",
         "DELETE_USER",
       ],
     },

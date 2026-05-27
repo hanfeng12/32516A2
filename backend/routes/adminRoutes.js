@@ -4,6 +4,7 @@ const UserActivity = require("../models/UserActivity");
 const Expense = require("../models/Expense");
 const { protect } = require("../middleware/authMiddleware");
 const logActivity = require("../utils/logActivity");
+const bcrypt = require("bcrypt");
 
 const router = express.Router();
 
@@ -42,42 +43,55 @@ router.get("/activities", protect, adminOnly, async (req, res) => {
   }
 });
 
-router.patch("/users/:id/role", protect, adminOnly, async (req, res) => {
-  try {
-    const { role } = req.body;
-
-    if (!["user", "admin"].includes(role)) {
-      return res.status(400).json({ message: "Invalid role" });
+router.put("/users/:id", protect, adminOnly, async (req, res) => {
+    try {
+      const { name, password } = req.body;
+  
+      const targetUser = await User.findById(req.params.id);
+  
+      if (!targetUser) {
+        return res.status(404).json({ message: "User not found" });
+      }
+  
+      if (name !== undefined && name.trim() === "") {
+        return res.status(400).json({ message: "Name cannot be empty" });
+      }
+  
+      if (password && password.length < 6) {
+        return res.status(400).json({
+          message: "Password must be at least 6 characters",
+        });
+      }
+  
+      if (name !== undefined) {
+        targetUser.name = name;
+      }
+  
+      if (password) {
+        targetUser.password = await bcrypt.hash(password, 10);
+      }
+  
+      const updatedUser = await targetUser.save();
+  
+      await logActivity({
+        userId: req.user._id,
+        action: "UPDATE_USER_PROFILE",
+        entityType: "user",
+        entityId: updatedUser._id,
+        description: `Admin updated user profile: ${updatedUser.email}`,
+      });
+  
+      res.json({
+        id: updatedUser._id,
+        name: updatedUser.name,
+        email: updatedUser.email,
+        role: updatedUser.role,
+      });
+    } catch (error) {
+      console.error("Update user profile error:", error);
+      res.status(500).json({ message: "Failed to update user profile" });
     }
-
-    const targetUser = await User.findById(req.params.id);
-
-    if (!targetUser) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    targetUser.role = role;
-    const updatedUser = await targetUser.save();
-
-    await logActivity({
-      userId: req.user._id,
-      action: "UPDATE_USER_ROLE",
-      entityType: "user",
-      entityId: updatedUser._id,
-      description: `Admin updated ${updatedUser.email}'s role to ${role}`,
-    });
-
-    res.json({
-      id: updatedUser._id,
-      name: updatedUser.name,
-      email: updatedUser.email,
-      role: updatedUser.role,
-    });
-  } catch (error) {
-    console.error("Update user role error:", error);
-    res.status(500).json({ message: "Failed to update user role" });
-  }
-});
+  });
 
 router.delete("/users/:id", protect, adminOnly, async (req, res) => {
   try {
