@@ -2,35 +2,189 @@ import { useEffect, useState } from "react";
 import "./App.css";
 
 const API_URL = "http://localhost:5001/api/expenses";
+const EXPENSE_API_URL = "http://localhost:5001/api/expenses";
+const AUTH_API_URL = "http://localhost:5001/api/auth";
 
 function App() {
+  const [authForm, setAuthForm] = useState({
+    name: "",
+    email: "",
+    password: "",
+  });
   const [expenses, setExpenses] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [authMode, setAuthMode] = useState("login");
+
   useEffect(() => {
-    fetchExpenses();
-  }, []);
+    if (isAuthenticated) {
+      fetchExpenses();
+    }
+  }, [isAuthenticated]);
 
   async function fetchExpenses() {
     try {
       setLoading(true);
       setErrorMessage("");
-
-      const response = await fetch(API_URL);
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch expenses.");
-      }
-
+  
+      const token = localStorage.getItem("token");
+  
+      const response = await fetch(EXPENSE_API_URL, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+  
       const data = await response.json();
+  
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to fetch expenses");
+      }
+  
       setExpenses(data);
     } catch (error) {
-      console.error(error);
-      setErrorMessage("Unable to load expenses. Please check the backend server.");
+      console.error("Fetch expenses error:", error);
+      setErrorMessage(error.message);
     } finally {
       setLoading(false);
     }
+  }
+
+  async function handleAuthSubmit(event) {
+    event.preventDefault();
+  
+    try {
+      setErrorMessage("");
+  
+      const endpoint = authMode === "login" ? "login" : "register";
+  
+      const payload =
+        authMode === "login"
+          ? {
+              email: authForm.email,
+              password: authForm.password,
+            }
+          : {
+              name: authForm.name,
+              email: authForm.email,
+              password: authForm.password,
+            };
+  
+      const response = await fetch(`${AUTH_API_URL}/${endpoint}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+  
+      const data = await response.json();
+  
+      if (!response.ok) {
+        throw new Error(data.message || "Authentication failed");
+      }
+  
+      localStorage.setItem("token", data.token);
+      setIsAuthenticated(true);
+      setAuthForm({
+        name: "",
+        email: "",
+        password: "",
+      });
+    } catch (error) {
+      console.error("Authentication error:", error);
+      setErrorMessage(error.message);
+    }
+  }
+
+  function handleLogout() {
+    localStorage.removeItem("token");
+    setIsAuthenticated(false);
+    setExpenses([]);
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <div className="auth-page">
+        <section className="auth-card">
+          <h1>Expense Tracker</h1>
+          <p className="auth-subtitle">
+            {authMode === "login"
+              ? "Log in to manage your expenses and budgets."
+              : "Create an account to start tracking your spending."}
+          </p>
+
+          <div className="auth-tabs">
+            <button
+              type="button"
+              className={authMode === "login" ? "active-tab" : ""}
+              onClick={() => setAuthMode("login")}
+            >
+              Login
+            </button>
+
+            <button
+              type="button"
+              className={authMode === "register" ? "active-tab" : ""}
+              onClick={() => setAuthMode("register")}
+            >
+              Register
+            </button>
+          </div>
+
+          <form className="auth-form" onSubmit={handleAuthSubmit}>
+            {authMode === "register" && (
+              <div className="form-group">
+                <label htmlFor="name">Name</label>
+                <input
+                  id="name"
+                  type="text"
+                  placeholder="Enter your name"
+                  value={authForm.name}
+                  onChange={(event) =>
+                  setAuthForm({ ...authForm, name: event.target.value })
+                  }
+                />
+              </div>
+            )}
+
+            <div className="form-group">
+              <label htmlFor="email">Email</label>
+              <input
+                id="email"
+                type="email"
+                placeholder="Enter your email"
+                value={authForm.email}
+                onChange={(event) =>
+                  setAuthForm({ ...authForm, email: event.target.value })
+                }
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="password">Password</label>
+              <input
+                id="password"
+                type="password"
+                placeholder="Enter your password"
+                value={authForm.password}
+                onChange={(event) =>
+                  setAuthForm({ ...authForm, password: event.target.value })
+                }
+              />  
+            </div>
+
+            {errorMessage && <p className="error-text">{errorMessage}</p>}
+
+            <button type="submit">
+              {authMode === "login" ? "Login" : "Register"}
+            </button>
+          </form>
+        </section>
+      </div>
+    );
   }
 
   return (
@@ -38,6 +192,9 @@ function App() {
       <header className="app-header">
         <h1>Expense Tracker</h1>
         <p>Track expenses, manage budgets, and review spending summaries.</p>
+        <button type="button" className="logout-button" onClick={handleLogout}>
+          Logout
+        </button>
       </header>
 
       <main className="app-main">
@@ -47,46 +204,27 @@ function App() {
           <form className="expense-form">
             <div className="form-group">
               <label htmlFor="title">Title</label>
-              <input
-                id="title"
-                type="text"
-                placeholder="e.g. Lunch"
-              />
+              <input id="title" type="text" placeholder="e.g. Lunch" />
             </div>
 
             <div className="form-group">
               <label htmlFor="amount">Amount</label>
-              <input
-                id="amount"
-                type="number"
-                placeholder="e.g. 15.50"
-              />
+              <input id="amount" type="number" placeholder="e.g. 15.50" />
             </div>
 
             <div className="form-group">
               <label htmlFor="category">Category</label>
-              <input
-                id="category"
-                type="text"
-                placeholder="e.g. Food"
-              />
+              <input id="category" type="text" placeholder="e.g. Food" />
             </div>
 
             <div className="form-group">
               <label htmlFor="date">Date</label>
-              <input
-                id="date"
-                type="date"
-              />
+              <input id="date" type="date" />
             </div>
 
             <div className="form-group">
               <label htmlFor="description">Description</label>
-              <input
-                id="description"
-                type="text"
-                placeholder="Optional note"
-              />
+              <input id="description" type="text" placeholder="Optional note" />
             </div>
 
             <button type="button">Add Expense</button>
@@ -102,7 +240,7 @@ function App() {
 
           {!loading && !errorMessage && expenses.length === 0 && (
             <p className="placeholder-text">
-              No expenses found. Add your first expense after the form is connected.
+              No expenses found.
             </p>
           )}
 
